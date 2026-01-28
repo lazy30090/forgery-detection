@@ -7,6 +7,9 @@ import com.juntong.forgerydetection.common.ApiResponse;
 import com.juntong.forgerydetection.entity.News;
 import com.juntong.forgerydetection.enums.DataSourceEnum;
 import com.juntong.forgerydetection.service.NewsService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.util.StringUtils;
@@ -17,7 +20,8 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/api/news")
-@RequiredArgsConstructor // 自动生成构造器注入，无需 @Autowired
+@RequiredArgsConstructor
+@Tag(name = "1. 新闻管理模块", description = "新闻的增删改查与检索")
 public class NewsController {
 
     private final NewsService newsService;
@@ -28,10 +32,13 @@ public class NewsController {
      * URL: GET /api/news/list?page=1&size=10&title=地震&label=谣言
      */
     @GetMapping("/list")
-    public ApiResponse<IPage<News>> list(@RequestParam(defaultValue = "1") Integer page,
-                                         @RequestParam(defaultValue = "10") Integer size,
-                                         @RequestParam(required = false) String title, // 搜索关键词
-                                         @RequestParam(required = false) String label) { // 筛选标签
+    @Operation(summary = "分页查询新闻列表", description = "支持按标题模糊搜索，按标签筛选，结果按创建时间倒序排列")
+    public ApiResponse<IPage<News>> list(
+            @Parameter(description = "页码 (默认1)") @RequestParam(defaultValue = "1") Integer page,
+            @Parameter(description = "每页条数 (默认10)") @RequestParam(defaultValue = "10") Integer size,
+            @Parameter(description = "搜索关键词 (匹配标题)") @RequestParam(required = false) String title,
+            @Parameter(description = "筛选标签 (如: 谣言/事实)") @RequestParam(required = false) String label) {
+
         // 1. 构造分页对象
         Page<News> pageParam = new Page<>(page, size);
 
@@ -55,7 +62,8 @@ public class NewsController {
      * URL: GET /api/news/{id}
      */
     @GetMapping("/{id}")
-    public ApiResponse<News> getDetail(@PathVariable Long id) {
+    @Operation(summary = "获取新闻详情", description = "根据主键 ID 查询单条新闻详情")
+    public ApiResponse<News> getDetail(@Parameter(description = "新闻主键ID") @PathVariable Long id) {
         News news = newsService.getById(id);
         return ApiResponse.success(news);
     }
@@ -66,6 +74,7 @@ public class NewsController {
      * URL: POST /api/news/add
      */
     @PostMapping("/add")
+    @Operation(summary = "新增/上传新闻", description = "用于用户手动上传待检测的新闻。系统会自动将标签设为'待检测'，来源设为'用户上传'。")
     public ApiResponse<Long> add(@RequestBody @Valid News news) {
         // 1. 强制设置来源
         news.setDataSource(DataSourceEnum.USER_UPLOAD.getCode());
