@@ -14,11 +14,11 @@ services:
       - TZ=Asia/Shanghai
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     ports:
-      - "3307:3306" # 映射到宿主机3307，防止和你本地MySQL(3306)冲突
+      - "3307:3306" # 映射到宿主机3307，防止和本地MySQL(3306)冲突
     volumes:
       # 数据持久化：防止重启容器后数据丢失
       - ./docker-data/mysql:/var/lib/mysql
-      # 初始化脚本：把你的 .sql 文件放在项目根目录的 sql/ 文件夹下，启动时会自动导入
+      # 初始化脚本： .sql 文件放在项目根目录的 sql/ 文件夹下，启动时会自动导入
       - ./sql:/docker-entrypoint-initdb.d
 
   # =========================================
@@ -56,7 +56,7 @@ services:
     depends_on:
       - mysqldb
       - redisdb
-      - ml-service # 等大家都起好了，我再起
+      - ml-service
     ports:
       - "8080:8080"
     environment:
@@ -64,9 +64,9 @@ services:
       - SPRING_PROFILES_ACTIVE=prod
       - TZ=Asia/Shanghai
     volumes:
-      # 【核心挂载】把宿主机的上传目录映射进去
+      # 把宿主机的上传目录映射进去
       # 格式：宿主机路径:容器路径
-      # 请确保你在项目根目录下建好了 forgery_uploads 文件夹
+      # 项目根目录下建好了 forgery_uploads 文件夹
       - ./forgery_uploads:/app/uploads
 
   # =========================================

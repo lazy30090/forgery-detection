@@ -2,7 +2,6 @@ package com.juntong.forgerydetection.controller;
 
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
-import cn.dev33.satoken.util.SaResult;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.juntong.forgerydetection.common.ApiResponse;
 import com.juntong.forgerydetection.entity.User;
@@ -28,7 +27,11 @@ public class AuthController {
      */
     @PostMapping("/login")
     @Operation(summary = "用户登录", description = "传入账号密码，返回 Token 信息")
-    public ApiResponse<Map<String, Object>> login(@RequestParam String username, @RequestParam String password) {
+    public ApiResponse<Map<String, Object>> login (@RequestBody Map<String, String> params) {
+        // 从 Map 中获取参数
+        String username = params.get("username");
+        String password = params.get("password");
+
         // 1. 查数据库
         User user = userService.getOne(new LambdaQueryWrapper<User>().eq(User::getUsername, username));
 
@@ -37,12 +40,12 @@ public class AuthController {
             return ApiResponse.failed("账号不存在");
         }
 
-        // 3. 校验密码 (这里为了比赛方便暂时用明文，正规开发请用 BCrypt 加密)
+        // 3. 校验密码 (这里为了比赛方便用明文)
         if (!user.getPassword().equals(password)) {
             return ApiResponse.failed("密码错误");
         }
 
-        // 4. 【Sa-Token 核心】登录
+        // 4. Sa-Token 登录
         // 这一句代码会自动生成 Token，并标记当前会话为已登录
         StpUtil.login(user.getId());
 

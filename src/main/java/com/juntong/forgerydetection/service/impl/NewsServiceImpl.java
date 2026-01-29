@@ -28,7 +28,7 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
     @Override
     @Cacheable(value = "dashboardStats", key = "'summary'")
     public Map<String, Object> getDashboardStats() {
-        // 模拟耗时 (演示时可以证明缓存生效，实际上线请删掉)
+        // 模拟耗时 (演示时可以证明缓存生效)
         // try { Thread.sleep(1000); } catch (InterruptedException e) {}
 
         // 1. 统计总数

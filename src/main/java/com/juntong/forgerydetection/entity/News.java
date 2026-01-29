@@ -69,20 +69,20 @@ public class News implements Serializable {
     private String picUrl;
 
     /**
-     * [新增] 核查时间 (对应 CSV: check_time)
+     * 核查时间 (对应 CSV: check_time)
      * 说明：这是判断新闻何时被确认为谣言的关键时间
      */
     @TableField("check_time")
     private LocalDateTime checkTime;
 
     /**
-     * [新增] 真伪标签 (对应 CSV: label)
+     * 伪标签 (对应 CSV: label)
      * 说明：核心字段，存储 "谣言" 或 "事实"
      */
     private String label;
 
     /**
-     * [新增] 话题标签 (对应 CSV: hashtag)
+     * 话题标签 (对应 CSV: hashtag)
      */
     private String hashtag;
 

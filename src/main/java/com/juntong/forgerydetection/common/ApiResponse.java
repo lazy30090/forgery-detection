@@ -64,7 +64,7 @@ public class ApiResponse<T> {
     }
 
     /**
-     * [新增] 失败返回结果（自定义错误码和提示信息）
+     * 失败返回结果（自定义错误码和提示信息）
      * 用于全局异常处理，比如校验失败时返回 404 + "标题不能为空"
      */
     public static <T> ApiResponse<T> failed(long code, String message) {

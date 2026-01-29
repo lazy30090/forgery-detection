@@ -7,6 +7,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 /**
  * 全局异常处理器
@@ -33,7 +34,6 @@ public class GlobalExceptionHandler {
 
         log.warn("参数校验异常: {}", message);
 
-        // 返回我们在 ResultCode 中定义的 VALIDATE_FAILED 码 (404)，但使用具体的错误消息
         return ApiResponse.failed(ResultCode.VALIDATE_FAILED.getCode(), message);
     }
 
@@ -59,5 +59,17 @@ public class GlobalExceptionHandler {
         log.warn("鉴权失败: {}", nle.getMessage());
         // 返回 401 状态码 (我们在 ResultCode 里定义过的)
         return ApiResponse.failed(ResultCode.UNAUTHORIZED.getCode(), "您尚未登录或 Token 已失效");
+    }
+
+    /**
+     * 4. 拦截静态资源未找到异常 (Spring Boot 3.x)
+     * 场景：请求了不存在的 /favicon.ico 或其他 js/css
+     */
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ApiResponse<String> handleNoResourceFoundException(NoResourceFoundException e) {
+        // 不需要打印堆栈，简单的 WARN 记录一下路径即可
+        log.warn("请求的静态资源不存在: {}", e.getResourcePath());
+        // 返回 404 状态码
+        return ApiResponse.failed(404, "资源不存在");
     }
 }

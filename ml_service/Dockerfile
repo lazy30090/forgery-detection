@@ -8,8 +8,8 @@ WORKDIR /app
 RUN pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
 
 # 1. 安装依赖
-# 如果你建了 requirements.txt，可以用 COPY requirements.txt . && pip install -r requirements.txt
-# 这里为了简便，直接装 (因为包很少)
+# 如果有 requirements.txt，可以用 COPY requirements.txt . && pip install -r requirements.txt
+# 这里为了简便，直接装
 RUN pip install fastapi uvicorn pydantic
 
 # 2. 复制脚本代码

@@ -102,5 +102,4 @@ POST {{host}}/api/detect/submit?newsId=1
 
 ### 6.2 [正例] 带 Token 提交检测 (预期成功 200)
 POST {{host}}/api/detect/submit?newsId=1
-# 这里的 Token 如果过期了，记得去 0.1 重新登录复制一个新的
 satoken: b648d36c-95af-4470-a2ad-a5ed74c6869b

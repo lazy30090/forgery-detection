@@ -36,7 +36,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/doc.html",             // Swagger 文档页面
                         "/webjars/**",           // Swagger 资源
                         "/v3/api-docs/**",       // Swagger 资源
-                        "/favicon.ico"           // 浏览器图标
+                        "/favicon.ico",          // 浏览器图标
+                        "/",                     // 根路径
+                        "/index.html",           // 首页文件
+                        "/css/**", "/js/**",     // 静态资源文件夹
+                        "/files/**"              // 上传的文件
                 );
     }
 
@@ -63,8 +67,15 @@ public class WebMvcConfig implements WebMvcConfigurer {
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // 也就是说：访问 /files/abc.jpg -> 自动去 D:/forgery_uploads/abc.jpg 找
+        // 这一句就是把浏览器访问的 /files/xxxx.jpg
+        // 映射到你 D 盘的 uploadPath 目录下
         registry.addResourceHandler("/files/**")
                 .addResourceLocations("file:" + uploadPath);
+
+        // Swagger 文档资源
+        registry.addResourceHandler("doc.html")
+                .addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 }

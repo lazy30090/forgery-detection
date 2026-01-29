@@ -45,17 +45,14 @@ public class DetectionTaskServiceImpl extends ServiceImpl<DetectionTaskMapper, D
         task.setStatus(TaskStatusEnum.PENDING.getCode());
         this.save(task);
 
-        // 3. 【关键】调用异步方法去联系 Python
-        // 注意：这里需要通过代理对象调用(暂且直接调用本类方法可能导致Async失效，简单起见我们先写在内部，
-        // 如果要完全规范，建议把下面这个方法抽离到一个单独的 AsyncDetectionManager 类中)
-        // 但为了方便你理解，我们先假设这里能异步执行：
+        // 3. 调用异步方法去联系 Python
         this.processTaskAsync(task.getId(), news);
 
         return task.getId();
     }
 
     /**
-     * 真实业务：异步调用 ML 接口
+     * 异步调用 ML 接口
      * @Async 表示这个方法会在一个新的线程里跑，不会卡住主线程
      */
     @Async
@@ -76,9 +73,8 @@ public class DetectionTaskServiceImpl extends ServiceImpl<DetectionTaskMapper, D
             requestBody.put("content", news.getContent() != null ? news.getContent() : "");
             requestBody.put("picUrl", news.getPicUrl() != null ? news.getPicUrl() : "");
 
-            // 3. 【拨打电话】发送 POST 请求
-            // Map.class 表示我们期望 Python 返回一个 Map 对象
-            // 改动说明：这里使用了从配置文件读取的 mlApiUrl
+            // 3. 发送 POST 请求
+            // Map.class 表示期望 Python 返回一个 Map 对象
             Map response = restTemplate.postForObject(mlApiUrl, requestBody, Map.class);
 
             // 4. 解析 Python 返回的结果

@@ -10,5 +10,5 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface NewsMapper extends BaseMapper<News> {
-    // 目前这里什么都不用写，MyBatis-Plus 已经帮你写好了增删改查
+    // MyBatis-Plus 已经写好了增删改查
 }
