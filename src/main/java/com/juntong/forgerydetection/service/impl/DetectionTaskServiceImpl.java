@@ -9,6 +9,7 @@ import com.juntong.forgerydetection.service.DetectionTaskService;
 import com.juntong.forgerydetection.service.NewsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -26,13 +27,9 @@ public class DetectionTaskServiceImpl extends ServiceImpl<DetectionTaskMapper, D
     private final RestTemplate restTemplate; // 注入刚才配好的“电话机”
 
     // Python 服务的地址
-    // 和正规项目的区别：URL
-    // 替换：核心动作就是把你 DetectionTaskServiceImpl.java 里写的 http://localhost:5000/predict 换成真实 ML 服务器的 IP 地址（比如 http://192.168.1.100:8000/predict）。
-    //
-    //配置化：为了避免每次换环境都要改 Java 代码，通常我们会把这个 URL 写在 application.properties 里，比如 ml.server.url=http://...，然后在代码里用 @Value("${ml.server.url}") 读取。
-    //
-    //契约一致：光换 URL 不够，必须保证真实的 ML 服务和你的Mock 脚本，在 入参（Input） 和 出参（Output） 的 JSON 格式上是完全一模一样的。只要格式对齐，Java 后端是感觉不到对面是“真 ML”还是“假脚本”的。
-    private static final String ML_API_URL = "http://localhost:5000/predict";
+    // 改动说明：不再写死，而是从配置文件(application-dev/prod.properties)中读取 ml.server.url 的值
+    @Value("${ml.server.url}")
+    private String mlApiUrl;
 
     @Override
     public Long submitTask(Long newsId) {
@@ -81,7 +78,8 @@ public class DetectionTaskServiceImpl extends ServiceImpl<DetectionTaskMapper, D
 
             // 3. 【拨打电话】发送 POST 请求
             // Map.class 表示我们期望 Python 返回一个 Map 对象
-            Map response = restTemplate.postForObject(ML_API_URL, requestBody, Map.class);
+            // 改动说明：这里使用了从配置文件读取的 mlApiUrl
+            Map response = restTemplate.postForObject(mlApiUrl, requestBody, Map.class);
 
             // 4. 解析 Python 返回的结果
             if (response != null && (Integer) response.get("code") == 200) {

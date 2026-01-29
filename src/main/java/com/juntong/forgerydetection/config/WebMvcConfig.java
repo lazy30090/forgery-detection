@@ -1,8 +1,11 @@
 package com.juntong.forgerydetection.config;
 
+import cn.dev33.satoken.interceptor.SaInterceptor;
+import cn.dev33.satoken.stp.StpUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -15,6 +18,27 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Value("${file.upload.path}")
     private String uploadPath;
+
+    /**
+     * 注册 Sa-Token 拦截器 (核心安全配置)
+     */
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        // 注册 Sa-Token 拦截器，校验规则为 StpUtil.checkLogin() 登录校验
+        registry.addInterceptor(new SaInterceptor(handle -> StpUtil.checkLogin()))
+                .addPathPatterns("/**") // 拦截所有接口
+                .excludePathPatterns(   // 排除以下接口 (白名单)
+                        "/api/auth/login",       // 登录接口
+                        "/api/auth/isLogin",     // 查询状态
+                        "/api/news/list",        // 新闻列表 (允许游客看)
+                        "/api/news/{id}",        // 新闻详情 (允许游客看)
+                        "/files/**",             // 静态资源图片
+                        "/doc.html",             // Swagger 文档页面
+                        "/webjars/**",           // Swagger 资源
+                        "/v3/api-docs/**",       // Swagger 资源
+                        "/favicon.ico"           // 浏览器图标
+                );
+    }
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {

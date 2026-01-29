@@ -1,32 +1,92 @@
+# =========================
+# 操作系统 & 系统文件 (防止 Mac/Windows 垃圾)
+# =========================
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+Desktop.ini
+
+# =========================
+# Java & Maven 构建产物
+# =========================
 target/
+*.class
+*.jar
+*.war
+*.ear
+# 忽略 Maven 包装器的 jar 包 (脚本 mvnw 要保留)
 .mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-
-### IntelliJ IDEA ###
-.idea
+# =========================
+# IDE 配置 (IntelliJ, VS Code, Eclipse, STS)
+# =========================
+# IntelliJ IDEA
+.idea/
 *.iws
 *.iml
 *.ipr
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
+# VS Code
 .vscode/
+
+# Eclipse / STS
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
+bin/
+
+# =========================
+# Python (ML Service)
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+# 虚拟环境 (以防你在本地创建了 venv)
+venv/
+.venv/
+env/
+
+# =========================
+# Docker 运行时产生的垃圾
+# =========================
+# 数据库挂载目录 (对应 docker-compose.yml)
+/mysql-data/
+/redis-data/
+/docker-data/
+/data/
+
+# Docker 覆盖配置 (本地开发用，不上库)
+docker-compose.override.yml
+
+# =========================
+# 日志 & 临时文件
+# =========================
+logs/
+*.log
+temp/
+tmp/
+
+# =========================
+# 业务文件
+# =========================
+# 上传文件 (保留文件夹结构，但忽略里面的图片)
+forgery_uploads/*
+!forgery_uploads/.gitkeep
+
+# =========================
+# 安全 & 敏感文件
+# =========================
+# IDEA HTTP Client 的私有环境变量 (包含 Token 等敏感信息)
+http-client.private.env.json
+
+# =========================
+# 配置文件 (防止密码泄露)
+# =========================
+# 忽略所有具体的环境配置
+src/main/resources/application-dev.properties
+src/main/resources/application-prod.properties

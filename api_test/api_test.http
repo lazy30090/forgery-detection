@@ -73,3 +73,34 @@ Content-Type: application/json
   "text": "测试文本",
   "imageUrl": "D:/test.jpg"
 }
+
+### (分隔符)
+
+# ==========================================
+# 0. 用户认证模块
+# ==========================================
+
+### 0.1 用户登录 (使用 Task 1 中初始化的 admin 账号)
+POST {{host}}/api/auth/login?username=admin&password=123456
+
+### 0.2 查询当前是否登录 (不带 Token -> 应该返回 false)
+GET {{host}}/api/auth/isLogin
+
+### 0.3 查询当前是否登录 (带 Token -> 应该返回 true)
+# 注意：你需要把 login 接口返回的 tokenValue 填到这里
+GET {{host}}/api/auth/isLogin
+satoken: 9ec25eb2-7019-45da-a5bf-0e160b1e43ac
+
+### (分隔符)
+
+# ==========================================
+# 6. 安全拦截测试
+# ==========================================
+
+### 6.1 [反例] 不带 Token 强行提交检测 (预期失败 401)
+POST {{host}}/api/detect/submit?newsId=1
+
+### 6.2 [正例] 带 Token 提交检测 (预期成功 200)
+POST {{host}}/api/detect/submit?newsId=1
+# 这里的 Token 如果过期了，记得去 0.1 重新登录复制一个新的
+satoken: b648d36c-95af-4470-a2ad-a5ed74c6869b

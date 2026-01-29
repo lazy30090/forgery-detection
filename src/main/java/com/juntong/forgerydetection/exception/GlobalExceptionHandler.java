@@ -49,4 +49,15 @@ public class GlobalExceptionHandler {
         // 告诉前端是系统故障，隐藏具体的代码报错细节
         return ApiResponse.failed(ResultCode.FAILED.getCode(), "系统繁忙，请稍后再试");
     }
+
+    /**
+     * 3. 拦截未登录异常 (Sa-Token)
+     * 场景：未带 Token 或 Token 失效时，返回 401
+     */
+    @ExceptionHandler(cn.dev33.satoken.exception.NotLoginException.class)
+    public ApiResponse<String> handleNotLoginException(cn.dev33.satoken.exception.NotLoginException nle) {
+        log.warn("鉴权失败: {}", nle.getMessage());
+        // 返回 401 状态码 (我们在 ResultCode 里定义过的)
+        return ApiResponse.failed(ResultCode.UNAUTHORIZED.getCode(), "您尚未登录或 Token 已失效");
+    }
 }
